@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>To-Do List</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: Verdana, Geneva, Tahoma, sans-serif;
+            /* background-color: rgb(231, 169, 11); */
+            
+        }
+        body::before{
+            content: "";
+            position: absolute;
+            z-index: -1;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: url("todo1.jpg");
+            background-repeat: no-repeat;
+            background-position: center;
+            background-size: cover;
+            filter: blur(6px);
+
+        }
+
+        div {
+            border-radius: 10px;
+            width: 350px;
+            margin: 50px auto 0 auto;
+            /* background-color: rgb(26, 57, 71); */
+        }
+
+        input,
+        ol {
+            margin-left: 50px;
+        }
+
+        h1 {
+            /* color: #7cfc00; */
+            color: rgb(2, 24, 124);
+            text-align: center;
+        }
+
+        input {
+            height: 25px;
+            border: 3px solid rgb(0, 0, 0);
+            border-radius: 8px;
+            outline: none;
+        }
+
+        #taskInput {
+            font-weight: bold;
+            padding: 2px 2px 2px 9px;
+        }
+
+        button {
+            height: 30px;
+            width: 80px;
+            font-weight: bolder;
+            border: 2px solid white;
+            border-radius: 5px;
+            background-color: rgb(119, 6, 91);
+            color: white;
+        }
+
+        li {
+            font-weight: bolder;
+            color: rgb(0, 0, 0);
+        }
+
+       
+        #taskList {
+            list-style-type: decimal; 
+            padding-left: 20px;
+            margin-top: 10px;
+        }
+
+        #taskList li {
+            max-width: 280px;
+            word-wrap: break-word;
+            white-space: pre-wrap;
+            overflow: hidden;
+        }
+    </style>
+</head>
+
+<body>
+    <div>
+        <h1>To-Do List</h1>
+        <input type="text" id="taskInput" placeholder="Add New Task">
+        <button id="addTaskButton">ADD</button>
+        <ol id="taskList"></ol>
+    </div>
+
+    <script>
+        function addTask(taskText = null) {
+            let taskInput = document.getElementById("taskInput");
+            if (!taskText) {
+                taskText = taskInput.value.trim();
+            }
+
+            if (taskText !== "") {
+                let taskList = document.getElementById("taskList");
+
+                let listItem = document.createElement("li");
+                listItem.textContent = taskText;
+
+                let removeButton = document.createElement("button");
+                removeButton.textContent = "Delete";
+                removeButton.style.marginLeft = "8px";
+                removeButton.style.marginTop = "8px";
+                removeButton.style.backgroundColor = "red";
+                removeButton.addEventListener("click", function () {
+                    taskList.removeChild(listItem);
+                    saveTasks();
+                });
+
+                listItem.appendChild(removeButton);
+                taskList.appendChild(listItem);
+                saveTasks();
+                taskInput.value = "";
+            }
+        }
+
+        function saveTasks() {
+            let tasks = [];
+            document.querySelectorAll("#taskList li").forEach(item => {
+                tasks.push(item.firstChild.textContent);
+            });
+            localStorage.setItem("tasks", JSON.stringify(tasks));
+        }
+
+        function loadTasks() {
+            let tasks = JSON.parse(localStorage.getItem("tasks")) || [];
+            tasks.forEach(taskText => {
+                addTask(taskText);
+            });
+        }
+
+        document.getElementById("addTaskButton").addEventListener("click", function () {
+            addTask();
+        });
+
+        window.addEventListener("load", loadTasks);
+    </script>
+</body>
+
+</html>
